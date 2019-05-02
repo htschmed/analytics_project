@@ -1,0 +1,17 @@
+version: '3'
+services:
+  python:
+    build: ./src
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=analytics_project
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - analytics_project-postgresql/var/lib/postgresql/data
+volumes:
+  analytics_project-postgresql:
+    external: true
