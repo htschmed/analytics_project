@@ -20,5 +20,17 @@ class MODIV(Base):
 # Define Fixed Width Column Specs for SR1A file
     # See https://www.state.nj.us/treasury/taxation/lpt/MODIV-Counties/2018/MODIVLayout2018.pdf
     col_specs = [
-        ['serial_no', (99, 105)],
+        ['county_code', (1, 2)],
+        ['district_code', (3, 4)],
+        ['block', (5, 13)],
+        ['lot', (14, 22)],
+        ['qualifier', (23, 33)],
+        ['property_class', (56, 58)],
+        ['building_class_code', (411, 415)],
+        ['year_constructed', (416, 419)],
+        ['assessment_code', (420, 420)],
+        ['acreage', (119, 127)],
+        ['land_value', (421, 429)],
+        ['improvement_value', (430, 438)],
+        ['net_value', (439, 447)],
     ]
