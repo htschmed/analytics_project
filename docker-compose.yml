@@ -6,6 +6,14 @@ services:
       - db
     depends_on:
       - db
+    environment:
+      - POSTGRES_DB=analytics_project
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_HOST=db
+    volumes:
+      - ./src:/app
+      - J:/analytics_project/data:/data
   db:
     image: postgres
     ports:

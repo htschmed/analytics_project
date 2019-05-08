@@ -7,7 +7,7 @@ class SR1A(Base):
 
     # Define Database Columns
     id = Column(Integer, primary_key=True)
-    real_property_id = Column(Integer, ForeignKey('real_property.id'))
+    real_property_id = Column(Integer, ForeignKey('property.id'))
     serial_no = Column(String)
     grantor_name = Column(String)
     grantor_street = Column(String)

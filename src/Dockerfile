@@ -4,4 +4,4 @@ COPY ./requirements.txt /
 RUN pip install -r requirements.txt
 
 WORKDIR /app
-#CMD ["python", "rucourses_update.py"]
+CMD ["python", "main.py"]
