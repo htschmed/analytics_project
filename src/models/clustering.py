@@ -19,6 +19,8 @@ def get_dataframe(municipal_code):
     engine = get_engine()
     sql = """select
            property.municipal_code,
+           property.latitude,
+           property.longitude,
            modiv.property_class,
            modiv.building_class_code,
            modiv.year_constructed,
@@ -42,10 +44,10 @@ def get_dataframe(municipal_code):
 
 def get_accuracy_score(municipal_code):
     df = get_dataframe(municipal_code);
-    X = df.ix[:, (0, 3, 5, 6, 7, 8)].values
-    y = df.ix[:, (8)].values
+    X = df.ix[:, (1, 2, 5, 7, 8, 9)].values
+    y = df.ix[:, (10)].values
 
-    k=2
+    k=4
     Hclustering = AgglomerativeClustering(n_clusters=k, affinity='euclidean', linkage='ward')
     Hclustering.fit_predict(X)
     print(sm.accuracy_score(y, Hclustering.labels_))
@@ -53,21 +55,19 @@ def get_accuracy_score(municipal_code):
 
 def cluster_scatter_plot(municipal_code):
     df = get_dataframe(municipal_code);
-    X = df.ix[:, (0, 3, 5, 6, 7, 8)].values
-    y = df.ix[:, (8)].values
+    X = df.ix[:, (1, 2, 5, 7, 8, 9)].values
+    y = df.ix[:, (10)].values
 
-    k = 12
+    k = 6
     Hclustering = AgglomerativeClustering(n_clusters=k, affinity='euclidean', linkage='ward')
     Hclustering.fit_predict(X)
-    print(Hclustering.labels_)
-    exit()
-    plt.scatter(X[:,3],X[:,4], c=Hclustering.labels_, cmap='rainbow')
+    plt.scatter(X[:,1],X[:,0], c=Hclustering.labels_, cmap='rainbow')
     plt.savefig('/plots/scatter_plot.png')
 
 
 def dendrogram_plot(municipal_code):
     df = get_dataframe(municipal_code);
-    X = df.ix[:,(0,3,5,6,7,8)].values
+    X = df.ix[:, (1, 2, 5, 7, 8, 9)].values
 
     Z = linkage(X, 'ward')
     dendrogram(Z, truncate_mode='lastp', p=12, leaf_rotation=45., leaf_font_size=10., show_contracted=True)
@@ -75,8 +75,8 @@ def dendrogram_plot(municipal_code):
     plt.xlabel('Cluster Size')
     plt.ylabel('Distance')
 
-    plt.axhline(y=500)
-    plt.axhline(y=150)
+    plt.axhline(y=6000000)
+    plt.axhline(y=3500000)
     plt.savefig('/plots/dendrogram.png')
 
 
