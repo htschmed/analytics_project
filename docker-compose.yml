@@ -14,6 +14,7 @@ services:
     volumes:
       - ./src:/app
       - J:/analytics_project/data:/data
+      - J:/analytics_project/plots:/plots
   db:
     image: postgres
     ports:
