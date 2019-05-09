@@ -1,5 +1,5 @@
 from models.utilities import create_database
-from models.parsers import import_oprs_data, import_modiv_data
+from models.parsers import import_oprs_data, import_modiv_data, import_sr1a_data
 
 # Create Database Structure
 #create_database()
@@ -8,6 +8,10 @@ from models.parsers import import_oprs_data, import_modiv_data
 #import_oprs_data('/data/1300demo144543(CONT).csv')
 
 # Import MODIV Data
-import_modiv_data('/data/modiv/Monmouth18.txt', 2018)
+#import_modiv_data('/data/modiv/Monmouth18.txt', 2018)
+
+# Import SR1A Data
+import_sr1a_data('/data/sr1a/2018_SR1A.txt', 2018)
+
 
 print('done')
