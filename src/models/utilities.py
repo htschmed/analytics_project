@@ -1,7 +1,8 @@
-import os
+import os, random
 from .property import Property
 from .modiv import MODIV
 from .sr1a import SR1A
+from colorutils import random_web
 from . import Base
 from sqlalchemy import create_engine
 
@@ -21,3 +22,8 @@ def get_engine():
 def create_database():
     engine = get_engine()
     Base.metadata.create_all(engine)
+
+
+def get_random_color():
+    color = random_web()
+    return color

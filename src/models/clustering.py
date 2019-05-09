@@ -1,6 +1,8 @@
 import sklearn
 from sklearn.cluster import AgglomerativeClustering
 import sklearn.metrics as sm
+import urllib.parse
+import json
 
 import pandas as pd
 import matplotlib
@@ -13,7 +15,7 @@ from scipy.cluster.hierarchy import fcluster
 from scipy.cluster.hierarchy import cophenet
 from scipy.spatial.distance import pdist
 
-from .utilities import get_engine
+from .utilities import get_engine, get_random_color
 
 def get_dataframe(municipal_code):
     engine = get_engine()
@@ -61,8 +63,45 @@ def cluster_scatter_plot(municipal_code):
     k = 6
     Hclustering = AgglomerativeClustering(n_clusters=k, affinity='euclidean', linkage='ward')
     Hclustering.fit_predict(X)
-    plt.scatter(X[:,1],X[:,0], c=Hclustering.labels_, cmap='rainbow')
+    plt.scatter(X[:,2],X[:,5], c=Hclustering.labels_, cmap='rainbow')
     plt.savefig('/plots/scatter_plot.png')
+
+
+def generate_geojson(municipal_code, filepath):
+    df = get_dataframe(municipal_code);
+    X = df.ix[:, (1, 2, 5, 7, 8, 9)].values
+
+    k=12
+    Hclustering = AgglomerativeClustering(n_clusters=k, affinity='euclidean', linkage='ward')
+    Hclustering.fit_predict(X)
+    labels = [x for x in Hclustering.labels_]
+    clusters = {}
+    for i in range(k):
+        clusters[i] = {'color': get_random_color() }
+        clusters[i]['features'] = []
+
+
+    for row in X:
+        cluster_label = labels.pop(0)
+        feature = {
+            'type': 'Feature',
+            'properties': {
+                'show_on_map': True
+            },
+            'geometry': {
+                'type': 'Point',
+                'coordinates': [
+                        row[1],
+                        row[0]
+                    ]
+                }
+            }
+        clusters[cluster_label]['features'].append(feature)
+
+    with open(filepath, 'w') as geo_json_file:
+        geo_json_file.write('var clusters=')
+        geo_json_file.write(json.dumps(clusters))
+
 
 
 def dendrogram_plot(municipal_code):

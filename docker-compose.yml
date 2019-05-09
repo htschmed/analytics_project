@@ -15,6 +15,7 @@ services:
       - ./src:/app
       - J:/analytics_project/data:/data
       - J:/analytics_project/plots:/plots
+      - J:/analytics_project/leaflet:/geojson
   db:
     image: postgres
     ports:
