@@ -1,4 +1,7 @@
 import sklearn
+from sklearn.cluster import AgglomerativeClustering
+import sklearn.metrics as sm
+
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
@@ -11,36 +14,63 @@ from scipy.cluster.hierarchy import cophenet
 from scipy.spatial.distance import pdist
 
 from .utilities import get_engine
-from sklearn.cluster import AgglomerativeClustering
 
-
-def dendrogram_plot():
+def get_dataframe(municipal_code):
     engine = get_engine()
     sql = """select
-       property.municipal_code,
-       modiv.property_class,
-       modiv.building_class_code,
-       modiv.year_constructed,
-       modiv.assessment_code,
-       modiv.acreage,
-       modiv.land_value,
-       modiv.improvement_value,
-       modiv.net_value
-       from property
-           inner join modiv on property.id = modiv.property_id 
-        where modiv.year_constructed is not null and 
-                modiv.acreage is not null and
-                modiv.land_value is not null and
-                modiv.improvement_value is not null and
-                modiv.net_value is not null
-                and property.municipal_code = 52
-        """
+           property.municipal_code,
+           modiv.property_class,
+           modiv.building_class_code,
+           modiv.year_constructed,
+           modiv.assessment_code,
+           modiv.acreage,
+           modiv.land_value,
+           modiv.improvement_value,
+           modiv.net_value
+           from property
+               inner join modiv on property.id = modiv.property_id 
+            where modiv.year_constructed is not null and 
+                    modiv.acreage is not null and
+                    modiv.land_value is not null and
+                    modiv.improvement_value is not null and
+                    modiv.net_value is not null
+                    and property.municipal_code = {}
+            """.format(municipal_code)
     df = pd.read_sql(sql, engine)
+    return df
+
+
+def get_accuracy_score(municipal_code):
+    df = get_dataframe(municipal_code);
+    X = df.ix[:, (0, 3, 5, 6, 7, 8)].values
+    y = df.ix[:, (8)].values
+
+    k=2
+    Hclustering = AgglomerativeClustering(n_clusters=k, affinity='euclidean', linkage='ward')
+    Hclustering.fit_predict(X)
+    print(sm.accuracy_score(y, Hclustering.labels_))
+
+
+def cluster_scatter_plot(municipal_code):
+    df = get_dataframe(municipal_code);
+    X = df.ix[:, (0, 3, 5, 6, 7, 8)].values
+    y = df.ix[:, (8)].values
+
+    k = 12
+    Hclustering = AgglomerativeClustering(n_clusters=k, affinity='euclidean', linkage='ward')
+    Hclustering.fit_predict(X)
+    print(Hclustering.labels_)
+    exit()
+    plt.scatter(X[:,3],X[:,4], c=Hclustering.labels_, cmap='rainbow')
+    plt.savefig('/plots/scatter_plot.png')
+
+
+def dendrogram_plot(municipal_code):
+    df = get_dataframe(municipal_code);
     X = df.ix[:,(0,3,5,6,7,8)].values
-    Y = df.ix[:,(8)].values
 
     Z = linkage(X, 'ward')
-    dendrogram(Z, truncate_mode='lastp', p=12, leaf_rotation=45., leaf_font_size=15., show_contracted=True)
+    dendrogram(Z, truncate_mode='lastp', p=12, leaf_rotation=45., leaf_font_size=10., show_contracted=True)
     plt.title('Truncated Hierarchical Clustering Dendrogram')
     plt.xlabel('Cluster Size')
     plt.ylabel('Distance')

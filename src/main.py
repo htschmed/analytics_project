@@ -1,6 +1,6 @@
 from models.utilities import create_database
 from models.parsers import import_oprs_data, import_modiv_data, import_sr1a_data
-from models.clustering import test_plt, dendrogram_plot
+import models.clustering as my_funcs
 
 # Create Database Structure
 #create_database()
@@ -14,7 +14,8 @@ from models.clustering import test_plt, dendrogram_plot
 # Import SR1A Data
 #import_sr1a_data('/data/sr1a/2018_SR1A.txt', 2018)
 
-dendrogram_plot()
-#test_plt()
+#my_funcs.get_accuracy_score('52')
+my_funcs.cluster_scatter_plot('12')
+#my_funcs.dendrogram_plot('52')
 
 print('done')
